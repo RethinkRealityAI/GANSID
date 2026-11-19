@@ -69,7 +69,16 @@ export interface Config {
   collections: {
     pages: Page;
     news: News;
+    events: Event;
+    galleries: Gallery;
+    resources: Resource;
     media: Media;
+    'congress-editions': CongressEdition;
+    people: Person;
+    'member-organizations': MemberOrganization;
+    partners: Partner;
+    regions: Region;
+    redirects: Redirect;
     users: User;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
@@ -77,11 +86,36 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    events: {
+      galleries: 'galleries';
+    };
+    'congress-editions': {
+      galleries: 'galleries';
+    };
+    people: {
+      speakerAt: 'congress-editions';
+      moderatorAt: 'congress-editions';
+      committeeAt: 'congress-editions';
+      planningTeamAt: 'congress-editions';
+    };
+    partners: {
+      congressSponsorships: 'congress-editions';
+    };
+  };
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     news: NewsSelect<false> | NewsSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    galleries: GalleriesSelect<false> | GalleriesSelect<true>;
+    resources: ResourcesSelect<false> | ResourcesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'congress-editions': CongressEditionsSelect<false> | CongressEditionsSelect<true>;
+    people: PeopleSelect<false> | PeopleSelect<true>;
+    'member-organizations': MemberOrganizationsSelect<false> | MemberOrganizationsSelect<true>;
+    partners: PartnersSelect<false> | PartnersSelect<true>;
+    regions: RegionsSelect<false> | RegionsSelect<true>;
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -94,9 +128,13 @@ export interface Config {
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'fr') | ('en' | 'fr')[];
   globals: {
+    'main-menu': MainMenu;
+    footer: Footer;
     announcement: Announcement;
   };
   globalsSelect: {
+    'main-menu': MainMenuSelect<false> | MainMenuSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
     announcement: AnnouncementSelect<false> | AnnouncementSelect<true>;
   };
   locale: 'en' | 'fr';
@@ -308,11 +346,15 @@ export interface News {
     [k: string]: unknown;
   };
   publishedAt: string;
-  category?: ('news' | 'press-release' | 'advocacy' | 'research' | 'congress' | 'awareness') | null;
+  category?: ('news' | 'press-release' | 'advocacy' | 'research' | 'congress' | 'awareness' | 'blog' | 'story') | null;
   /**
    * Address on the old WordPress site (for redirects).
    */
   legacyUrl?: string | null;
+  /**
+   * Imported image not uploaded yet. Upload it as the cover image, then clear this.
+   */
+  legacyImageUrl?: string | null;
   /**
    * Filled in from the title. Only change it if you know why.
    */
@@ -328,6 +370,611 @@ export interface News {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * Roundtables, awareness days, launches and webinars. The annual Congress is under Congress.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  title: string;
+  type: 'roundtable' | 'awareness-day' | 'launch' | 'webinar' | 'meeting' | 'seminar' | 'other';
+  startDate: string;
+  /**
+   * Only for events over several days.
+   */
+  endDate?: string | null;
+  /**
+   * e.g. "National Sickle Cell Centre, Lagos, Nigeria" or "Online".
+   */
+  location?: string | null;
+  format?: ('in-person' | 'online' | 'hybrid') | null;
+  /**
+   * Shown on event cards. One or two sentences.
+   */
+  summary?: string | null;
+  cover?: (number | null) | Media;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  registrationUrl?: string | null;
+  /**
+   * Defaults to "Register".
+   */
+  registrationLabel?: string | null;
+  /**
+   * Galleries linked to this event. Link a gallery from the gallery itself.
+   */
+  galleries?: {
+    docs?: (number | Gallery)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Filled in from the title. Only change it if you know why.
+   */
+  slug?: string | null;
+  /**
+   * Optional. If left empty, the title and summary are used.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  /**
+   * Old addresses that now redirect here.
+   */
+  legacyUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The image on the old site that has not been uploaded here yet. Once you have uploaded it above, clear this.
+   */
+  legacyImageUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Photo albums from events and the Congress.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "galleries".
+ */
+export interface Gallery {
+  id: number;
+  title: string;
+  /**
+   * When the photos were taken.
+   */
+  date?: string | null;
+  /**
+   * Optional: the event these photos are from.
+   */
+  event?: (number | null) | Event;
+  /**
+   * Optional: the Congress these photos are from.
+   */
+  congress?: (number | null) | CongressEdition;
+  /**
+   * Optional, e.g. the Picflow album. Shown as a "See all photos" button.
+   */
+  externalAlbumUrl?: string | null;
+  /**
+   * Shown on gallery cards. Defaults to the first photo.
+   */
+  cover?: (number | null) | Media;
+  /**
+   * Drag to reorder.
+   */
+  images?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Filled in from the title. Only change it if you know why.
+   */
+  slug?: string | null;
+  legacyUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Upload it as the cover above, then clear this.
+   */
+  legacyCoverUrl?: string | null;
+  /**
+   * Photos on the old site that still need uploading. Delete each row once uploaded above.
+   */
+  legacyImages?:
+    | {
+        url: string;
+        alt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Each year of the GANSID Congress: dates, venue, speakers, sponsors and photos.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "congress-editions".
+ */
+export interface CongressEdition {
+  id: number;
+  /**
+   * e.g. "GANSID Congress 2026".
+   */
+  title: string;
+  year: number;
+  /**
+   * 1 for the 1st (inaugural) Congress, 4 for the 4th…
+   */
+  number?: number | null;
+  format?: ('in-person' | 'virtual' | 'hybrid') | null;
+  /**
+   * The Congress theme, word for word.
+   */
+  theme?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  /**
+   * Leave empty for a virtual Congress.
+   */
+  venue?: string | null;
+  city?: string | null;
+  country?: string | null;
+  heroImage?: (number | null) | Media;
+  about?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Leave empty once registration has closed.
+   */
+  registrationUrl?: string | null;
+  programUrl?: string | null;
+  /**
+   * Everyone who spoke or presented. Drag to change the order shown on the site.
+   */
+  speakers?: (number | Person)[] | null;
+  /**
+   * Session moderators and chairs. Drag to change the order shown on the site.
+   */
+  moderators?: (number | Person)[] | null;
+  /**
+   * Committee members for this year. Drag to change the order shown on the site.
+   */
+  scientificCommittee?: (number | Person)[] | null;
+  /**
+   * The Congress planning team (including the local planning team). Drag to change the order shown on the site.
+   */
+  planningTeam?: (number | Person)[] | null;
+  /**
+   * Sponsors of this year, in the order shown. Add the organization under Partners & sponsors first.
+   */
+  sponsors?:
+    | {
+        partner: number | Partner;
+        tier?: ('platinum' | 'gold' | 'silver' | 'bronze' | 'supporter') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Galleries linked to this Congress. Link a gallery from the gallery itself.
+   */
+  galleries?: {
+    docs?: (number | Gallery)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Set from the year: /congress/<year>.
+   */
+  slug?: string | null;
+  /**
+   * Optional. If left empty, the title and summary are used.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  /**
+   * Old addresses that now redirect here.
+   */
+  legacyUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The image on the old site that has not been uploaded here yet. Once you have uploaded it above, clear this.
+   */
+  legacyImageUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Board, team, speakers, committee members and e-course authors. One record per person.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people".
+ */
+export interface Person {
+  id: number;
+  /**
+   * Shown before the name.
+   */
+  honorific?: ('dr' | 'prof' | 'mr' | 'mrs' | 'ms') | null;
+  /**
+   * Without "Dr" or "Prof." (pick that on the left).
+   */
+  name: string;
+  /**
+   * Optional, e.g. "MD, PhD".
+   */
+  credentials?: string | null;
+  /**
+   * e.g. "Professor of Haematology" or "Chair, Board of Directors".
+   */
+  position?: string | null;
+  /**
+   * Where they work.
+   */
+  organization?: string | null;
+  country?: string | null;
+  /**
+   * For board members and regional leads: the region they represent.
+   */
+  region?: (number | null) | Region;
+  /**
+   * A square head-and-shoulders photo works best.
+   */
+  photo?: (number | null) | Media;
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Pick every role that applies. Board and team members appear on the About pages.
+   */
+  roles?:
+    ('board' | 'team' | 'speaker' | 'scientific-committee' | 'planning-team' | 'ecourse-author' | 'moderator')[] | null;
+  /**
+   * Optional. Lower numbers come first (e.g. Board chair first). Otherwise A to Z.
+   */
+  sortOrder?: number | null;
+  speakerAt?: {
+    docs?: (number | CongressEdition)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  moderatorAt?: {
+    docs?: (number | CongressEdition)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  committeeAt?: {
+    docs?: (number | CongressEdition)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  planningTeamAt?: {
+    docs?: (number | CongressEdition)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Filled in from the title. Only change it if you know why.
+   */
+  slug?: string | null;
+  /**
+   * Kept so you can check the import split the name correctly.
+   */
+  nameOnOldSite?: string | null;
+  /**
+   * Old addresses that now redirect here.
+   */
+  legacyUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The image on the old site that has not been uploaded here yet. Once you have uploaded it above, clear this.
+   */
+  legacyImageUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * The GANSID regional networks. Board members, member organizations and people can be linked to a region.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "regions".
+ */
+export interface Region {
+  id: number;
+  /**
+   * e.g. "African Region".
+   */
+  name: string;
+  /**
+   * e.g. AFR, SEAR. Leave empty if the region has none.
+   */
+  code?: string | null;
+  /**
+   * Lower numbers come first.
+   */
+  order?: number | null;
+  /**
+   * Optional. Shown on the region page.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Filled in from the title. Only change it if you know why.
+   */
+  slug?: string | null;
+  /**
+   * Old addresses that now redirect here.
+   */
+  legacyUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The image on the old site that has not been uploaded here yet. Once you have uploaded it above, clear this.
+   */
+  legacyImageUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Organizations that partner with or sponsor GANSID.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners".
+ */
+export interface Partner {
+  id: number;
+  name: string;
+  type?: ('strategic' | 'collaborator' | 'sponsor')[] | null;
+  /**
+   * Overall partnership level (optional). Congress sponsorship tiers are set per year on the Congress edition.
+   */
+  tier?: ('platinum' | 'gold' | 'silver' | 'bronze' | 'supporter') | null;
+  logo?: (number | null) | Media;
+  website?: string | null;
+  /**
+   * Set on each Congress edition, under Sponsors.
+   */
+  congressSponsorships?: {
+    docs?: (number | CongressEdition)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Old addresses that now redirect here.
+   */
+  legacyUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The image on the old site that has not been uploaded here yet. Once you have uploaded it above, clear this.
+   */
+  legacyImageUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Toolkits, guides, PDFs, videos and webcasts for the Resources section.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources".
+ */
+export interface Resource {
+  id: number;
+  title: string;
+  type: 'toolkit' | 'guide' | 'pdf' | 'video' | 'webcast' | 'ebook' | 'presentation' | 'podcast';
+  /**
+   * Used for the filters on the Resources page.
+   */
+  topics?:
+    | (
+        | 'sickle-cell'
+        | 'thalassemia'
+        | 'bleeding-disorders'
+        | 'bone-marrow-failure'
+        | 'enzymopathies'
+        | 'hereditary-spherocytosis'
+        | 'clinical-trials'
+        | 'advocacy'
+        | 'congress'
+      )[]
+    | null;
+  /**
+   * What it is and who it is for, in a sentence or two.
+   */
+  summary?: string | null;
+  source?: ('link' | 'file') | null;
+  url?: string | null;
+  /**
+   * PDFs and images only. Put videos on YouTube or Vimeo and link them.
+   */
+  file?: (number | null) | Media;
+  /**
+   * Optional preview image.
+   */
+  thumbnail?: (number | null) | Media;
+  publishedAt?: string | null;
+  /**
+   * Filled in from the title. Only change it if you know why.
+   */
+  slug?: string | null;
+  /**
+   * Old addresses that now redirect here.
+   */
+  legacyUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The image on the old site that has not been uploaded here yet. Once you have uploaded it above, clear this.
+   */
+  legacyImageUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Primary members (patient organizations) and affiliates.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "member-organizations".
+ */
+export interface MemberOrganization {
+  id: number;
+  name: string;
+  membershipType: 'member' | 'affiliate';
+  country?: string | null;
+  region?: (number | null) | Region;
+  logo?: (number | null) | Media;
+  website?: string | null;
+  /**
+   * What the organization does. A short paragraph.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Filled in from the title. Only change it if you know why.
+   */
+  slug?: string | null;
+  /**
+   * Old addresses that now redirect here.
+   */
+  legacyUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The image on the old site that has not been uploaded here yet. Once you have uploaded it above, clear this.
+   */
+  legacyImageUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Sends visitors from an old address to the new one, so old links and search results keep working.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: number;
+  /**
+   * e.g. /board-of-directors. You can paste a full old URL; it is trimmed to the path.
+   */
+  from: string;
+  /**
+   * A path on this site (e.g. /about) or a full URL to another website.
+   */
+  to: string;
+  /**
+   * Use Permanent unless the old address will come back.
+   */
+  type: '301' | '302';
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * People who can sign in to this admin. They sign in with their GANSID account email.
@@ -477,8 +1124,44 @@ export interface PayloadLockedDocument {
         value: number | News;
       } | null)
     | ({
+        relationTo: 'events';
+        value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'galleries';
+        value: number | Gallery;
+      } | null)
+    | ({
+        relationTo: 'resources';
+        value: number | Resource;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'congress-editions';
+        value: number | CongressEdition;
+      } | null)
+    | ({
+        relationTo: 'people';
+        value: number | Person;
+      } | null)
+    | ({
+        relationTo: 'member-organizations';
+        value: number | MemberOrganization;
+      } | null)
+    | ({
+        relationTo: 'partners';
+        value: number | Partner;
+      } | null)
+    | ({
+        relationTo: 'regions';
+        value: number | Region;
+      } | null)
+    | ({
+        relationTo: 'redirects';
+        value: number | Redirect;
       } | null)
     | ({
         relationTo: 'users';
@@ -605,6 +1288,7 @@ export interface NewsSelect<T extends boolean = true> {
   publishedAt?: T;
   category?: T;
   legacyUrl?: T;
+  legacyImageUrl?: T;
   slug?: T;
   seo?:
     | T
@@ -613,6 +1297,105 @@ export interface NewsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  type?: T;
+  startDate?: T;
+  endDate?: T;
+  location?: T;
+  format?: T;
+  summary?: T;
+  cover?: T;
+  body?: T;
+  registrationUrl?: T;
+  registrationLabel?: T;
+  galleries?: T;
+  slug?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  legacyUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
+  legacyImageUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "galleries_select".
+ */
+export interface GalleriesSelect<T extends boolean = true> {
+  title?: T;
+  date?: T;
+  event?: T;
+  congress?: T;
+  externalAlbumUrl?: T;
+  cover?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  slug?: T;
+  legacyUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
+  legacyCoverUrl?: T;
+  legacyImages?:
+    | T
+    | {
+        url?: T;
+        alt?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources_select".
+ */
+export interface ResourcesSelect<T extends boolean = true> {
+  title?: T;
+  type?: T;
+  topics?: T;
+  summary?: T;
+  source?: T;
+  url?: T;
+  file?: T;
+  thumbnail?: T;
+  publishedAt?: T;
+  slug?: T;
+  legacyUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
+  legacyImageUrl?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -669,6 +1452,165 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "congress-editions_select".
+ */
+export interface CongressEditionsSelect<T extends boolean = true> {
+  title?: T;
+  year?: T;
+  number?: T;
+  format?: T;
+  theme?: T;
+  startDate?: T;
+  endDate?: T;
+  venue?: T;
+  city?: T;
+  country?: T;
+  heroImage?: T;
+  about?: T;
+  registrationUrl?: T;
+  programUrl?: T;
+  speakers?: T;
+  moderators?: T;
+  scientificCommittee?: T;
+  planningTeam?: T;
+  sponsors?:
+    | T
+    | {
+        partner?: T;
+        tier?: T;
+        id?: T;
+      };
+  galleries?: T;
+  slug?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  legacyUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
+  legacyImageUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people_select".
+ */
+export interface PeopleSelect<T extends boolean = true> {
+  honorific?: T;
+  name?: T;
+  credentials?: T;
+  position?: T;
+  organization?: T;
+  country?: T;
+  region?: T;
+  photo?: T;
+  bio?: T;
+  roles?: T;
+  sortOrder?: T;
+  speakerAt?: T;
+  moderatorAt?: T;
+  committeeAt?: T;
+  planningTeamAt?: T;
+  slug?: T;
+  nameOnOldSite?: T;
+  legacyUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
+  legacyImageUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "member-organizations_select".
+ */
+export interface MemberOrganizationsSelect<T extends boolean = true> {
+  name?: T;
+  membershipType?: T;
+  country?: T;
+  region?: T;
+  logo?: T;
+  website?: T;
+  description?: T;
+  slug?: T;
+  legacyUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
+  legacyImageUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners_select".
+ */
+export interface PartnersSelect<T extends boolean = true> {
+  name?: T;
+  type?: T;
+  tier?: T;
+  logo?: T;
+  website?: T;
+  congressSponsorships?: T;
+  legacyUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
+  legacyImageUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "regions_select".
+ */
+export interface RegionsSelect<T extends boolean = true> {
+  name?: T;
+  code?: T;
+  order?: T;
+  description?: T;
+  slug?: T;
+  legacyUrls?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
+  legacyImageUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects_select".
+ */
+export interface RedirectsSelect<T extends boolean = true> {
+  from?: T;
+  to?: T;
+  type?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -755,6 +1697,125 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * The menu across the top of every page. Drag items to reorder; open an item to add its drop-down.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "main-menu".
+ */
+export interface MainMenu {
+  id: number;
+  items?:
+    | {
+        label: string;
+        /**
+         * e.g. /about. Leave empty for a heading that only opens a sub-menu.
+         */
+        url?: string | null;
+        newTab?: boolean | null;
+        children?:
+          | {
+              label: string;
+              /**
+               * e.g. /about. Leave empty for a heading that only opens a sub-menu.
+               */
+              url?: string | null;
+              newTab?: boolean | null;
+              level3?:
+                | {
+                    label: string;
+                    /**
+                     * e.g. /about. Leave empty for a heading that only opens a sub-menu.
+                     */
+                    url?: string | null;
+                    newTab?: boolean | null;
+                    level4?:
+                      | {
+                          label: string;
+                          /**
+                           * e.g. /about. Leave empty for a heading that only opens a sub-menu.
+                           */
+                          url?: string | null;
+                          newTab?: boolean | null;
+                          level5?:
+                            | {
+                                label: string;
+                                /**
+                                 * e.g. /about. Leave empty for a heading that only opens a sub-menu.
+                                 */
+                                url?: string | null;
+                                newTab?: boolean | null;
+                                id?: string | null;
+                              }[]
+                            | null;
+                          id?: string | null;
+                        }[]
+                      | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The links, contact details and small print at the bottom of every page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  columns?:
+    | {
+        heading: string;
+        links?:
+          | {
+              label: string;
+              url: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  email?: string | null;
+  address?: string | null;
+  social?:
+    | {
+        platform: 'facebook' | 'instagram' | 'linkedin' | 'x' | 'youtube' | 'whatsapp';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. Privacy policy, Terms of use.
+   */
+  legalLinks?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. "Global Action Network for Sickle Cell & Other Inherited Blood Disorders. All rights reserved."
+   */
+  copyright?: string | null;
+  /**
+   * Optional.
+   */
+  charityNumber?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * A one-line message across the top of every page.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -769,6 +1830,97 @@ export interface Announcement {
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "main-menu_select".
+ */
+export interface MainMenuSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        newTab?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              newTab?: T;
+              level3?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    newTab?: T;
+                    level4?:
+                      | T
+                      | {
+                          label?: T;
+                          url?: T;
+                          newTab?: T;
+                          level5?:
+                            | T
+                            | {
+                                label?: T;
+                                url?: T;
+                                newTab?: T;
+                                id?: T;
+                              };
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  columns?:
+    | T
+    | {
+        heading?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  email?: T;
+  address?: T;
+  social?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  legalLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  copyright?: T;
+  charityNumber?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -810,6 +1962,14 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'news';
           value: number | News;
+        } | null)
+      | ({
+          relationTo: 'events';
+          value: number | Event;
+        } | null)
+      | ({
+          relationTo: 'congress-editions';
+          value: number | CongressEdition;
         } | null);
     global?: string | null;
     user?: {

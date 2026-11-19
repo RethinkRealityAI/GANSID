@@ -8,7 +8,18 @@ import { Users } from './collections/Users';
 import { Media } from './collections/Media';
 import { Pages } from './collections/Pages';
 import { News } from './collections/News';
+import { People } from './collections/People';
+import { Events } from './collections/Events';
+import { CongressEditions } from './collections/CongressEditions';
+import { Galleries } from './collections/Galleries';
+import { Resources } from './collections/Resources';
+import { MemberOrganizations } from './collections/MemberOrganizations';
+import { Regions } from './collections/Regions';
+import { Partners } from './collections/Partners';
+import { Redirects } from './collections/Redirects';
 import { Announcement } from './globals/Announcement';
+import { MainMenu } from './globals/MainMenu';
+import { Footer } from './globals/Footer';
 import { emailAdapter, mediaStorage } from './lib/infra';
 
 const filename = fileURLToPath(import.meta.url);
@@ -40,8 +51,26 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Pages, News, Media, Users],
-  globals: [Announcement],
+  collections: [
+    // Website
+    Pages,
+    News,
+    Events,
+    Galleries,
+    Resources,
+    Media,
+    // Congress
+    CongressEditions,
+    // Network
+    People,
+    MemberOrganizations,
+    Partners,
+    Regions,
+    // Settings
+    Redirects,
+    Users,
+  ],
+  globals: [MainMenu, Footer, Announcement],
   editor: lexicalEditor(),
   // Default languages: English, with French ready. Add or remove locales here; untranslated
   // fields fall back to English so nothing ever shows blank.
