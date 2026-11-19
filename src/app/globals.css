@@ -97,6 +97,14 @@ body {
   line-height: 0.9;
   text-wrap: balance;
 }
+@utility display-md {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(2.25rem, 4.2vw, 4rem);
+  line-height: 0.92;
+  text-wrap: balance;
+}
 @utility heading-xl {
   font-family: var(--font-sans);
   font-weight: 650;

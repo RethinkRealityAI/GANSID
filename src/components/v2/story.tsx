@@ -120,7 +120,11 @@ function Horizontal() {
   );
 }
 
-/** Milestones on an arc echoing the logo; autoplays until you pick one. */
+/** Milestones on an arc echoing the logo; autoplays until you pick one. Saved for reuse on inner pages. */
+export function StoryOrbit() {
+  return <Orbit />;
+}
+
 function Orbit() {
   const n = timeline.length;
   const [a, setA] = useState(0);
