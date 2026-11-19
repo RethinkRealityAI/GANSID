@@ -1,0 +1,10 @@
+/* GANSID skin for the Payload admin: brand colours and type, nothing structural. */
+:root {
+  --theme-success-500: #1a3c6e;
+  --font-body: 'Manrope Variable', system-ui, sans-serif;
+}
+html[data-theme='light'] {
+  --theme-elevation-0: #ffffff;
+  --theme-bg: #fbfaf8;
+}
+.nav__brand, .graphic-logo { max-height: 40px; }

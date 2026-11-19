@@ -1,11 +1,11 @@
 import type { NextConfig } from 'next';
+import { withPayload } from '@payloadcms/next/withPayload';
 
 const nextConfig: NextConfig = {
-  // Static export keeps the marketing site fast, cheap to host and CDN-friendly.
-  // Switch off if we later need server features (forms API, ISR from a CMS).
-  output: 'export',
+  // No static export any more: the CMS, previews and form APIs need a server.
+  // Public pages are still cached and refreshed on publish (see src/hooks/revalidate.ts).
   images: { unoptimized: true },
   trailingSlash: true,
 };
 
-export default nextConfig;
+export default withPayload(nextConfig, { devBundleServerPackages: false });
