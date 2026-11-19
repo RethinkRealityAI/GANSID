@@ -13,6 +13,8 @@ export const NEWS_CATEGORIES = [
   { label: 'Research & treatment', value: 'research' },
   { label: 'Congress', value: 'congress' },
   { label: 'Awareness day', value: 'awareness' },
+  { label: 'Blog', value: 'blog' },
+  { label: 'Clinician story', value: 'story' },
 ];
 
 export const News: CollectionConfig = {
@@ -56,6 +58,16 @@ export const News: CollectionConfig = {
       type: 'text',
       label: 'Old website address',
       admin: { position: 'sidebar', readOnly: true, description: 'Address on the old WordPress site (for redirects).' },
+    },
+    {
+      name: 'legacyImageUrl',
+      type: 'text',
+      label: 'Old cover image address',
+      admin: {
+        position: 'sidebar',
+        description: 'Imported image not uploaded yet. Upload it as the cover image, then clear this.',
+        condition: (data) => Boolean(data?.legacyImageUrl),
+      },
     },
     slugField(),
     seoField,
