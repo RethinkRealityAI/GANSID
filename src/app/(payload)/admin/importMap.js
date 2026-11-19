@@ -26,6 +26,7 @@ import { AdminIcon as AdminIcon_8080e1ef1118adf03a39f8c4df3468b1 } from '../../.
 import { AdminLogo as AdminLogo_8080e1ef1118adf03a39f8c4df3468b1 } from '../../../components/admin/brand'
 import { StaffSignIn as StaffSignIn_beea12905e796b0a46929def4493fb5e } from '../../../components/admin/staff-sign-in'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
+import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 /** @type import('payload').ImportMap */
 export const importMap = {
@@ -56,5 +57,6 @@ export const importMap = {
   "/components/admin/brand#AdminIcon": AdminIcon_8080e1ef1118adf03a39f8c4df3468b1,
   "/components/admin/brand#AdminLogo": AdminLogo_8080e1ef1118adf03a39f8c4df3468b1,
   "/components/admin/staff-sign-in#StaffSignIn": StaffSignIn_beea12905e796b0a46929def4493fb5e,
-  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
+  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
+  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }

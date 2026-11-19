@@ -9,6 +9,7 @@ import { Media } from './collections/Media';
 import { Pages } from './collections/Pages';
 import { News } from './collections/News';
 import { Announcement } from './globals/Announcement';
+import { emailAdapter, mediaStorage } from './lib/infra';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -63,6 +64,8 @@ export default buildConfig({
     migrationDir: path.resolve(dirname, 'migrations'),
   }),
   sharp,
+  email: emailAdapter(),
+  plugins: [mediaStorage()],
   graphQL: { disable: true },
   telemetry: false,
 });
