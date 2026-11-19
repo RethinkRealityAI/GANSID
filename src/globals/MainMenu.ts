@@ -16,6 +16,13 @@ const rowLabel = '/components/admin/row-label#LabelRowLabel';
 /** The old site's menu goes five levels deep (Programs › Capacity Building › … › A Call for Mentors). */
 const MAX_DEPTH = 5;
 
+/**
+ * Field holding the items one level below `depth` (1 = top level).
+ * Each level needs its own name: Payload names the database relation after the field, so
+ * `children` inside `children` gives two relations with the same name and every read fails.
+ */
+export const menuChildField = (depth: number): string => (depth === 1 ? 'children' : `level${depth + 1}`);
+
 const menuItemFields = (depth: number): Field[] => [
   {
     type: 'row',
@@ -33,7 +40,7 @@ const menuItemFields = (depth: number): Field[] => [
   ...(depth < MAX_DEPTH
     ? [
         {
-          name: 'children',
+          name: menuChildField(depth),
           type: 'array',
           // Short table names: five nested levels would exceed Postgres's 63-character limit.
           dbName: `main_menu_l${depth + 1}`,

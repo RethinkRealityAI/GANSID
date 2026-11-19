@@ -1720,7 +1720,7 @@ export interface MainMenu {
                */
               url?: string | null;
               newTab?: boolean | null;
-              children?:
+              level3?:
                 | {
                     label: string;
                     /**
@@ -1728,7 +1728,7 @@ export interface MainMenu {
                      */
                     url?: string | null;
                     newTab?: boolean | null;
-                    children?:
+                    level4?:
                       | {
                           label: string;
                           /**
@@ -1736,7 +1736,7 @@ export interface MainMenu {
                            */
                           url?: string | null;
                           newTab?: boolean | null;
-                          children?:
+                          level5?:
                             | {
                                 label: string;
                                 /**
@@ -1848,19 +1848,19 @@ export interface MainMenuSelect<T extends boolean = true> {
               label?: T;
               url?: T;
               newTab?: T;
-              children?:
+              level3?:
                 | T
                 | {
                     label?: T;
                     url?: T;
                     newTab?: T;
-                    children?:
+                    level4?:
                       | T
                       | {
                           label?: T;
                           url?: T;
                           newTab?: T;
-                          children?:
+                          level5?:
                             | T
                             | {
                                 label?: T;
