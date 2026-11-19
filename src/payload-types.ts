@@ -78,6 +78,7 @@ export interface Config {
     'member-organizations': MemberOrganization;
     partners: Partner;
     regions: Region;
+    redirects: Redirect;
     users: User;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
@@ -114,6 +115,7 @@ export interface Config {
     'member-organizations': MemberOrganizationsSelect<false> | MemberOrganizationsSelect<true>;
     partners: PartnersSelect<false> | PartnersSelect<true>;
     regions: RegionsSelect<false> | RegionsSelect<true>;
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -948,6 +950,29 @@ export interface MemberOrganization {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Sends visitors from an old address to the new one, so old links and search results keep working.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: number;
+  /**
+   * e.g. /board-of-directors. You can paste a full old URL; it is trimmed to the path.
+   */
+  from: string;
+  /**
+   * A path on this site (e.g. /about) or a full URL to another website.
+   */
+  to: string;
+  /**
+   * Use Permanent unless the old address will come back.
+   */
+  type: '301' | '302';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * People who can sign in to this admin. They sign in with their GANSID account email.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1129,6 +1154,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'regions';
         value: number | Region;
+      } | null)
+    | ({
+        relationTo: 'redirects';
+        value: number | Redirect;
       } | null)
     | ({
         relationTo: 'users';
@@ -1565,6 +1594,17 @@ export interface RegionsSelect<T extends boolean = true> {
         id?: T;
       };
   legacyImageUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects_select".
+ */
+export interface RedirectsSelect<T extends boolean = true> {
+  from?: T;
+  to?: T;
+  type?: T;
   updatedAt?: T;
   createdAt?: T;
 }

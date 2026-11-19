@@ -16,6 +16,7 @@ import { Resources } from './collections/Resources';
 import { MemberOrganizations } from './collections/MemberOrganizations';
 import { Regions } from './collections/Regions';
 import { Partners } from './collections/Partners';
+import { Redirects } from './collections/Redirects';
 import { Announcement } from './globals/Announcement';
 
 const filename = fileURLToPath(import.meta.url);
@@ -62,6 +63,7 @@ export default buildConfig({
     Partners,
     Regions,
     // Settings
+    Redirects,
     Users,
   ],
   globals: [Announcement],
