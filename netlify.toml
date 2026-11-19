@@ -7,6 +7,15 @@
 [build.environment]
   NODE_VERSION = "22"
 
+# Production and branch deploys apply pending CMS database migrations before building.
+# They only ever add to the separate "payload" schema; Congress tables are untouched.
+# Deploy previews (PRs) build only and never change the database.
+[context.production]
+  command = "npm run migrate && npm run build"
+
+[context.branch-deploy]
+  command = "npm run migrate && npm run build"
+
 # Old WordPress URLs keep working while pages move. Add a line per moved page
 # (CMS-managed redirects will replace this list later).
 # [[redirects]]
