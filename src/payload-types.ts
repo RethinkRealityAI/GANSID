@@ -128,9 +128,13 @@ export interface Config {
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'fr') | ('en' | 'fr')[];
   globals: {
+    'main-menu': MainMenu;
+    footer: Footer;
     announcement: Announcement;
   };
   globalsSelect: {
+    'main-menu': MainMenuSelect<false> | MainMenuSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
     announcement: AnnouncementSelect<false> | AnnouncementSelect<true>;
   };
   locale: 'en' | 'fr';
@@ -1693,6 +1697,125 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * The menu across the top of every page. Drag items to reorder; open an item to add its drop-down.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "main-menu".
+ */
+export interface MainMenu {
+  id: number;
+  items?:
+    | {
+        label: string;
+        /**
+         * e.g. /about. Leave empty for a heading that only opens a sub-menu.
+         */
+        url?: string | null;
+        newTab?: boolean | null;
+        children?:
+          | {
+              label: string;
+              /**
+               * e.g. /about. Leave empty for a heading that only opens a sub-menu.
+               */
+              url?: string | null;
+              newTab?: boolean | null;
+              children?:
+                | {
+                    label: string;
+                    /**
+                     * e.g. /about. Leave empty for a heading that only opens a sub-menu.
+                     */
+                    url?: string | null;
+                    newTab?: boolean | null;
+                    children?:
+                      | {
+                          label: string;
+                          /**
+                           * e.g. /about. Leave empty for a heading that only opens a sub-menu.
+                           */
+                          url?: string | null;
+                          newTab?: boolean | null;
+                          children?:
+                            | {
+                                label: string;
+                                /**
+                                 * e.g. /about. Leave empty for a heading that only opens a sub-menu.
+                                 */
+                                url?: string | null;
+                                newTab?: boolean | null;
+                                id?: string | null;
+                              }[]
+                            | null;
+                          id?: string | null;
+                        }[]
+                      | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The links, contact details and small print at the bottom of every page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  columns?:
+    | {
+        heading: string;
+        links?:
+          | {
+              label: string;
+              url: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  email?: string | null;
+  address?: string | null;
+  social?:
+    | {
+        platform: 'facebook' | 'instagram' | 'linkedin' | 'x' | 'youtube' | 'whatsapp';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. Privacy policy, Terms of use.
+   */
+  legalLinks?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. "Global Action Network for Sickle Cell & Other Inherited Blood Disorders. All rights reserved."
+   */
+  copyright?: string | null;
+  /**
+   * Optional.
+   */
+  charityNumber?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * A one-line message across the top of every page.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1707,6 +1830,97 @@ export interface Announcement {
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "main-menu_select".
+ */
+export interface MainMenuSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        newTab?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              newTab?: T;
+              children?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    newTab?: T;
+                    children?:
+                      | T
+                      | {
+                          label?: T;
+                          url?: T;
+                          newTab?: T;
+                          children?:
+                            | T
+                            | {
+                                label?: T;
+                                url?: T;
+                                newTab?: T;
+                                id?: T;
+                              };
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  columns?:
+    | T
+    | {
+        heading?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  email?: T;
+  address?: T;
+  social?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  legalLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  copyright?: T;
+  charityNumber?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -18,6 +18,8 @@ import { Regions } from './collections/Regions';
 import { Partners } from './collections/Partners';
 import { Redirects } from './collections/Redirects';
 import { Announcement } from './globals/Announcement';
+import { MainMenu } from './globals/MainMenu';
+import { Footer } from './globals/Footer';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -66,7 +68,7 @@ export default buildConfig({
     Redirects,
     Users,
   ],
-  globals: [Announcement],
+  globals: [MainMenu, Footer, Announcement],
   editor: lexicalEditor(),
   // Default languages: English, with French ready. Add or remove locales here; untranslated
   // fields fall back to English so nothing ever shows blank.
