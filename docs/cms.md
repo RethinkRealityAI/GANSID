@@ -56,4 +56,4 @@ Local sign-in without touching the live Supabase project: see `scripts/local-aut
 - Media storage on Supabase Storage (S3 adapter). Local disk is dev-only; Netlify's disk is not persistent.
 - Email adapter (staff invites, form notifications).
 - Content import from the WordPress scrape, People/Events/Congress/Galleries collections.
-- Forms engine, member portal.
+- Forms engine (proposal in `docs/forms-design.md`), member portal.
