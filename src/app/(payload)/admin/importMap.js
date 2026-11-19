@@ -24,6 +24,7 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { SignOutButton as SignOutButton_c99d913f1fc3d867b9b0101cd49792e6 } from '../../../components/admin/sign-out-button'
 import { AdminIcon as AdminIcon_8080e1ef1118adf03a39f8c4df3468b1 } from '../../../components/admin/brand'
 import { AdminLogo as AdminLogo_8080e1ef1118adf03a39f8c4df3468b1 } from '../../../components/admin/brand'
+import { Welcome as Welcome_cdb297238b4d2c8d6e0af424e47dc955 } from '../../../components/admin/welcome'
 import { StaffSignIn as StaffSignIn_beea12905e796b0a46929def4493fb5e } from '../../../components/admin/staff-sign-in'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
@@ -56,6 +57,7 @@ export const importMap = {
   "/components/admin/sign-out-button#SignOutButton": SignOutButton_c99d913f1fc3d867b9b0101cd49792e6,
   "/components/admin/brand#AdminIcon": AdminIcon_8080e1ef1118adf03a39f8c4df3468b1,
   "/components/admin/brand#AdminLogo": AdminLogo_8080e1ef1118adf03a39f8c4df3468b1,
+  "/components/admin/welcome#Welcome": Welcome_cdb297238b4d2c8d6e0af424e47dc955,
   "/components/admin/staff-sign-in#StaffSignIn": StaffSignIn_beea12905e796b0a46929def4493fb5e,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24

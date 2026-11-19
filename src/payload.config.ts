@@ -30,6 +30,7 @@ export default buildConfig({
       },
       logout: { Button: '/components/admin/sign-out-button#SignOutButton' },
       beforeLogin: ['/components/admin/staff-sign-in#StaffSignIn'],
+      beforeDashboard: ['/components/admin/welcome#Welcome'],
     },
     livePreview: {
       breakpoints: [
