@@ -1,12 +1,14 @@
-# Static export: `next build` writes the site to out/.
+# Next.js on Netlify's Next.js runtime (detected automatically). The site is no longer a static
+# export: the CMS admin (/admin), previews and form APIs run as server functions, while public
+# pages are cached and refreshed when editors publish.
 [build]
   command = "npm run build"
-  publish = "out"
 
 [build.environment]
   NODE_VERSION = "22"
 
-# Old WordPress URLs keep working while pages move. Add a line per moved page.
+# Old WordPress URLs keep working while pages move. Add a line per moved page
+# (CMS-managed redirects will replace this list later).
 # [[redirects]]
 #   from = "/about-the-gansid"
 #   to = "/about/"
