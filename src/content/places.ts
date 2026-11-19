@@ -1,0 +1,55 @@
+/** Real places in GANSID's story, used by the globe hero. */
+export const places = [
+  {
+    id: 'hyderabad',
+    name: 'Hyderabad, India',
+    lat: 17.385,
+    lng: 78.487,
+    tag: 'Congress 2026',
+    body: 'The 4th GANSID Congress, 23 to 25 October 2026, at HICC.',
+    section: 'congress',
+    cta: 'See the Congress',
+  },
+  {
+    id: 'freetown',
+    name: 'Freetown, Sierra Leone',
+    lat: 8.484,
+    lng: -13.234,
+    tag: 'Africa Region',
+    body: 'A GANSID roundtable bringing clinicians and advocates together in 2025.',
+    section: 'story',
+    cta: 'Our story',
+  },
+  {
+    id: 'maiduguri',
+    name: 'Maiduguri, Nigeria',
+    lat: 11.846,
+    lng: 13.16,
+    tag: 'Research',
+    body: 'Registry and clinical trial seminars for health care providers.',
+    section: 'work',
+    cta: 'Clinical trials & research',
+  },
+  {
+    id: 'dover',
+    name: 'Dover, Delaware, USA',
+    lat: 39.158,
+    lng: -75.524,
+    tag: 'Headquarters',
+    body: 'Home of GANSID, a U.S. 501(c)(3) charity since November 2023.',
+    section: 'story',
+    cta: 'How we began',
+  },
+  {
+    id: 'toronto',
+    name: 'Toronto, Canada',
+    lat: 43.653,
+    lng: -79.383,
+    tag: 'Registered 2023',
+    body: 'GANSID was registered in Toronto on 30 June 2023.',
+    section: 'story',
+    cta: 'How we began',
+  },
+] as const;
+
+export type Place = (typeof places)[number];
