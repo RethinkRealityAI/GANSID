@@ -33,12 +33,25 @@ export async function findRedirect(path: string): Promise<Entry | null> {
 }
 
 /**
+ * The site uses trailing slashes (next.config `trailingSlash: true`), so give site paths one
+ * here; otherwise visitors take a second hop. Files (/x.pdf), queries and anchors are left alone.
+ */
+function withTrailingSlash(to: string) {
+  if (!to.startsWith('/')) return to;
+  const m = /^([^?#]*)(.*)$/.exec(to)!;
+  const [pathPart, rest] = [m[1], m[2]];
+  if (pathPart.endsWith('/') || /\.[a-z0-9]{2,5}$/i.test(pathPart)) return to;
+  return `${pathPart}/${rest}`;
+}
+
+/**
  * Call where a page would otherwise 404. Next.js sends 308 for permanent and 307 for
  * temporary redirects; search engines treat these exactly like 301 and 302.
  */
 export async function redirectIfMoved(path: string) {
   const hit = await findRedirect(path);
   if (!hit || normalizePath(hit.to) === normalizePath(path)) return;
-  if (hit.type === '302') redirect(hit.to);
-  permanentRedirect(hit.to);
+  const to = withTrailingSlash(hit.to);
+  if (hit.type === '302') redirect(to);
+  permanentRedirect(to);
 }
